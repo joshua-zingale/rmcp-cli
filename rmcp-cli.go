@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
+	"context"
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/joshua-zingale/rmcp-cl/internal"
 )
@@ -28,6 +31,21 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("%v\n", r.Servers)
+	fmt.Println(internal.FormatServerList(r))
+
+	mux := internal.NewCommandMux(os.Stdout, &client)
+
+	mux.AddHandlerFunc(`^/.+`, internal.HandleCommand)
+	mux.AddHandlerFunc("(.+)", internal.HandleUserMessage)
+
+	ctx := context.Background()
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		line := scanner.Text()
+		err := mux.Handle(ctx, line)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+	}
 
 }

@@ -3,6 +3,7 @@ package internal
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -41,12 +42,9 @@ func (client *Client) ListServers() (*rmcp.McpServerList, error) {
 
 type GenerateOpts struct{}
 
-func (client *Client) Generate(messages []rmcp.Message, opts *GenerateOpts) (*rmcp.GenerationResponse, error) {
+func (client *Client) Generate(req *rmcp.GenerationRequest, opts *GenerateOpts) (*rmcp.GenerationResponse, error) {
 
-	req := rmcp.GenerationRequest{
-		Messages: messages,
-	}
-	resp, err := post[rmcp.GenerationResponse](client, "/generations", &req)
+	resp, err := post[rmcp.GenerationResponse](client, "/generations", req)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +75,7 @@ func get[T any](client *Client, path string) (*T, error) {
 	return &responseObj, err
 }
 
-// Sends a post request to the MCP host. The bodyObj should be null if there is no body
+// Sends a post request to the MCP host. The bodyObj should be nil if there is no body
 func post[T any](client *Client, path string, bodyObj any) (*T, error) {
 
 	var reqBody io.Reader
@@ -87,26 +85,33 @@ func post[T any](client *Client, path string, bodyObj any) (*T, error) {
 	} else {
 		bytesBody, err := json.Marshal(bodyObj)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("could not marshal object: %s", err)
 		}
 		reqBody = bytes.NewReader(bytesBody)
 	}
 
-	req, err := http.NewRequest("POST", client.address+"/"+path, reqBody)
+	req, err := http.NewRequest("POST", client.address+path, reqBody)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("problem forming request: %s", err)
 	}
+
+	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
 
 	resp, err := client.http.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("problem sending request: %s", err)
+	}
+
+	if resp.StatusCode >= 400 {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("invalid request (%d): %s", resp.StatusCode, body)
 	}
 
 	var responseObj T
 	err = json.NewDecoder(resp.Body).Decode(&responseObj)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("problem decoding response: %s", err)
 	}
 
 	return &responseObj, err
