@@ -1,0 +1,1 @@
+A debug tool for [remote-mcp-host](https://github.com/joshua-zingale/remote-mcp-host)
