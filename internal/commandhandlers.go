@@ -1,6 +1,6 @@
 package internal
 
-import rmcp "github.com/joshua-zingale/remote-mcp-host/remote-mcp-host"
+import "github.com/joshua-zingale/remote-mcp-host/remote-mcp-host/api"
 
 func HandleCommand(co CommandOutput, ci CommandInput) {
 	cmd := ci.Match()[1:]
@@ -20,8 +20,8 @@ func HandleCommand(co CommandOutput, ci CommandInput) {
 func HandleUserMessage(co CommandOutput, ci CommandInput) {
 	message := ci.Match()
 
-	req := rmcp.GenerationRequest{
-		Messages: []rmcp.Message{NewUserMessage(message, nil)},
+	req := api.GenerationRequest{
+		Messages: []api.Message{NewUserMessage(message, nil)},
 	}
 
 	res, err := ci.client.Generate(&req, nil)

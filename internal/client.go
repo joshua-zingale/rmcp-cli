@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	rmcp "github.com/joshua-zingale/remote-mcp-host/remote-mcp-host"
+	"github.com/joshua-zingale/remote-mcp-host/remote-mcp-host/api"
 )
 
 type Client struct {
@@ -24,16 +24,16 @@ func NewClient(host string, port string) Client {
 
 type UserMessageOpts struct{}
 
-func NewUserMessage(body string, opts *UserMessageOpts) rmcp.Message {
-	return rmcp.Message{
+func NewUserMessage(body string, opts *UserMessageOpts) api.Message {
+	return api.Message{
 		Role:  "user",
-		Parts: []rmcp.UnionPart{{Part: rmcp.NewTextPart(body)}},
+		Parts: []api.UnionPart{{Part: api.NewTextPart(body)}},
 	}
 }
 
-func (client *Client) ListServers() (*rmcp.McpServerList, error) {
+func (client *Client) ListServers() (*api.McpServerList, error) {
 
-	list, err := get[rmcp.McpServerList](client, "/servers")
+	list, err := get[api.McpServerList](client, "/servers")
 	if err != nil {
 		return nil, err
 	}
@@ -42,9 +42,9 @@ func (client *Client) ListServers() (*rmcp.McpServerList, error) {
 
 type GenerateOpts struct{}
 
-func (client *Client) Generate(req *rmcp.GenerationRequest, opts *GenerateOpts) (*rmcp.GenerationResponse, error) {
+func (client *Client) Generate(req *api.GenerationRequest, opts *GenerateOpts) (*api.GenerationResponse, error) {
 
-	resp, err := post[rmcp.GenerationResponse](client, "/generations", req)
+	resp, err := post[api.GenerationResponse](client, "/generations", req)
 	if err != nil {
 		return nil, err
 	}

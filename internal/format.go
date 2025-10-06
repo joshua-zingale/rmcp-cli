@@ -5,10 +5,10 @@ import (
 	"sort"
 	"strings"
 
-	rmcp "github.com/joshua-zingale/remote-mcp-host/remote-mcp-host"
+	"github.com/joshua-zingale/remote-mcp-host/remote-mcp-host/api"
 )
 
-func FormatServerList(list *rmcp.McpServerList) string {
+func FormatServerList(list *api.McpServerList) string {
 	bldr := strings.Builder{}
 
 	bldr.WriteString("## Server List ##\n")
@@ -22,7 +22,7 @@ func FormatServerList(list *rmcp.McpServerList) string {
 	return bldr.String()
 }
 
-func FormatGenerationResponse(resp *rmcp.GenerationResponse) string {
+func FormatGenerationResponse(resp *api.GenerationResponse) string {
 	bldr := strings.Builder{}
 
 	bldr.WriteString("## Generation Response from ##\n")
@@ -36,11 +36,11 @@ func FormatGenerationResponse(resp *rmcp.GenerationResponse) string {
 	return bldr.String()
 }
 
-func FormatPart(part *rmcp.UnionPart) string {
+func FormatPart(part *api.UnionPart) string {
 	bldr := strings.Builder{}
 	bldr.WriteString("Part: ")
 	switch part := part.Part.(type) {
-	case rmcp.TextPart:
+	case api.TextPart:
 		bldr.WriteString("Text: ")
 		if part.Error != "" {
 			bldr.WriteString("Error!: ")
@@ -48,7 +48,7 @@ func FormatPart(part *rmcp.UnionPart) string {
 		} else {
 			bldr.WriteString(part.Text)
 		}
-	case rmcp.ToolUsePart:
+	case api.ToolUsePart:
 		bldr.WriteString("ToolUse: ")
 		bldr.WriteString(fmt.Sprintf("Name: %s : "))
 		bldr.WriteString(fmt.Sprintf("Input: %+v : ", part.Input))
