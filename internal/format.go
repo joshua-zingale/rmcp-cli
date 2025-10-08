@@ -29,8 +29,11 @@ func FormatGenerationResponse(resp *api.GenerationResponse) string {
 
 	bldr.WriteString(fmt.Sprintf("Role: %s\n", resp.Message.Role))
 
+	if len(resp.Message.Parts) == 0 {
+		bldr.WriteString("############ No Parts ############\n")
+	}
 	for i, part := range resp.Message.Parts {
-		bldr.WriteString(fmt.Sprintf("Part %d: %s", i+1, FormatPart(&part)))
+		bldr.WriteString(fmt.Sprintf("Part %d: %s\n", i+1, FormatPart(&part)))
 	}
 
 	return bldr.String()
