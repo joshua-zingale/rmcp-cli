@@ -25,7 +25,7 @@ func FormatServerList(list *api.McpServerList) string {
 func FormatGenerationResponse(resp *api.GenerationResponse) string {
 	bldr := strings.Builder{}
 
-	bldr.WriteString("## Generation Response from ##\n")
+	bldr.WriteString("## Generation Response ##\n")
 
 	bldr.WriteString(fmt.Sprintf("Role: %s\n", resp.Message.Role))
 
@@ -50,7 +50,7 @@ func FormatPart(part *api.UnionPart) string {
 		}
 	case api.ToolUsePart:
 		bldr.WriteString("ToolUse: ")
-		bldr.WriteString(fmt.Sprintf("Name: %s : "))
+		bldr.WriteString(fmt.Sprintf("ToolID: %+v : ", part.ToolId))
 		bldr.WriteString(fmt.Sprintf("Input: %+v : ", part.Input))
 
 		if part.Error != "" {
