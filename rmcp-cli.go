@@ -26,13 +26,6 @@ func main() {
 
 	client := internal.NewClient(*host, *port)
 
-	r, err := client.ListServers()
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(internal.FormatServerList(r))
-
 	mux := internal.NewCommandMux(os.Stdout, &client)
 
 	mux.AddHandlerFunc(`^/.+`, internal.HandleCommand)
