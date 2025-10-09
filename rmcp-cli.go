@@ -28,7 +28,7 @@ func main() {
 
 	mux := internal.NewCommandMux(os.Stdout, &client)
 
-	mux.AddHandlerFunc(`^/.+`, internal.HandleCommand)
+	mux.AddHandlerFunc(`^/(\w+)(\s+.*)?`, internal.HandleCommand)
 	mux.AddHandlerFunc("(.+)", internal.HandleUserMessage)
 
 	ctx := context.Background()
